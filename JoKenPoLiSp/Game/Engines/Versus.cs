@@ -2,22 +2,38 @@
 
 namespace JoKenPoLiSp
 {
-    class Versus : Game
+    class Versus : GameEngine
     {
-        ResultadoComparacao Resultado;
         Personagem PersonagemA;
         Personagem PersonagemB;
+        string Resultado;
 
-        public override void ImprimeRegras()
+        public override void ExplicarRegras()
         {
             Console.WriteLine("* INSTRUÇÕES *");
             Console.WriteLine("1- Escolha qual jogada deseja fazer de acordo com os códigos abaixo e aperte enter");
+            Console.WriteLine("2- Dois jogadores irão escolher suas jogadas, um de cada vez.");
 
             Console.WriteLine();
             Console.WriteLine();
         }
 
-        public override void RecuperarJogadas()
+        public override void ExecutarJogo()
+        {
+            RecuperarJogadas();
+
+            ProcessarJogadas();
+        }
+
+        public override void ExibirVencedor()
+        {
+            Console.WriteLine(Resultado);
+
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        private void RecuperarJogadas()
         {
             PersonagemA = RecuperaJogada("JOGADOR A");
             Console.WriteLine();
@@ -26,19 +42,19 @@ namespace JoKenPoLiSp
             Console.WriteLine();
         }
 
-        public override void ProcessarJogadas()
+        private void ProcessarJogadas()
         {
-            Resultado = PersonagemA.GanhaDe(PersonagemB);
-            switch (Resultado)
+            var res = PersonagemA.GanhaDe(PersonagemB);
+            switch (res)
             {
                 case ResultadoComparacao.Ganha:
-                    Console.WriteLine("JOGADOR A GANHOU");
+                    Resultado = "JOGADOR A GANHOU";
                     break;
                 case ResultadoComparacao.Empata:
-                    Console.WriteLine("EMPATE");
+                    Resultado = "EMPATE";
                     break;
                 case ResultadoComparacao.Perde:
-                    Console.WriteLine("JOGADOR B GANHOU");
+                    Resultado = "JOGADOR B GANHOU";
                     break;
             }
         }

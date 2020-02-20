@@ -5,61 +5,27 @@ namespace JoKenPoLiSp
 {
     class Program
     {
-        public static GameBuilder GameBuilder = new GameBuilder();
-        public static Game Jogo;
-
         static void Main(string[] args)
         {
             while (true)
             {
-                Console.WriteLine("Jo-Ken-Po-Li-Sp -- Pedra-Papel-Tesoura-Lagarto-Spock");
+                Game game = new Game();
 
-                Console.WriteLine();
-                Console.WriteLine();
+                game.EscolherModo();
 
-                Console.WriteLine("* MODOS DE JOGO ");
-                Console.WriteLine("1 = Versus (1v1)");
-                Console.WriteLine("2 = DeathMatch (NvN)");
-                Console.WriteLine();
+                game.ExplicarRegras();
 
-                EscolherModo();
+                game.ExibirCodigos();
 
-                Jogo.ImprimeRegras();
+                game.ExecutarJogo();
 
-                Jogo.ImprimeCodigos();
+                game.ExibirVencedor();
 
-                Jogo.RecuperarJogadas();
-
-                Jogo.ProcessarJogadas();
-
-                Jogo.ImprimeResultado();
-
-                if (!Jogo.JogarNovamente())
+                if (!game.JogarNovamente())
                     break;
 
                 Console.Clear();
             }
-        }
-
-        private static void EscolherModo()
-        {
-            while (true)
-            {
-                try
-                {
-                    Console.Write("Modo de jogo: ");
-                    Jogo = GameBuilder.BuildGame(Console.ReadKey());
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("* MODO INVÁLIDO *");
-                }
-            }
-
-            Console.WriteLine();
-            Console.WriteLine();
         }
     }
 }

@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace JoKenPoLiSp.Builders
 {
-    class GameBuilder
+    class GameEngineBuilder
     {
-        public Game BuildGame(ConsoleKeyInfo consoleKeyInfo)
+        public IGameEngine BuildGameEngine(ConsoleKeyInfo consoleKeyInfo)
         {
             if (!IsValidKey(consoleKeyInfo))
-                throw new ArgumentException("Valor inválido");
+                throw new ArgumentException("Argumento inválido");
 
             int i = int.Parse(consoleKeyInfo.KeyChar.ToString());
             switch (i)
