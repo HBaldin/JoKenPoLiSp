@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace JoKenPoLiSp
 {
     class PersonagemBuilder
     {
-        public Personagem BuildPersonagem(int i)
+        public Personagem BuildPersonagem(ConsoleKeyInfo consoleKeyInfo)
         {
+            if (!IsValidKey(consoleKeyInfo))
+                throw new ArgumentException("Personagem não identificado");
+
+            int i = int.Parse(consoleKeyInfo.KeyChar.ToString());
             switch (i)
             {
                 case 1:
@@ -19,8 +24,14 @@ namespace JoKenPoLiSp
                 case 5:
                     return new Spock();
                 default:
-                    throw new Exception("Personagem não identificado");
+                    throw new ArgumentException("Personagem não identificado");
             }
+        }
+
+        public bool IsValidKey(ConsoleKeyInfo consoleKeyInfo)
+        {
+            Regex regex = new Regex("[1,2,3,4,5]");
+            return regex.IsMatch(consoleKeyInfo.Key.ToString());
         }
     }
 }
