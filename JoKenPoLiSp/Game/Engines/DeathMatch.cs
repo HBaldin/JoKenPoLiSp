@@ -6,7 +6,8 @@ namespace JoKenPoLiSp
 {
     class DeathMatch : GameEngine
     {
-        readonly Dictionary<Personagem, int> Jogadas = new Dictionary<Personagem, int>();
+        Dictionary<Personagem, int> Vitorias = new Dictionary<Personagem, int>();
+        List<Personagem[]> Batalhas = new List<Personagem[]>();
         int NumeroDeJogadores;
         string Resultado;
 
@@ -42,7 +43,7 @@ namespace JoKenPoLiSp
             for (int i = 0; i < NumeroDeJogadores; i++)
             {
                 var per = RecuperaJogada($"JOGADOR {i}: ");
-                Jogadas[per] = 0;
+                Vitorias[per] = 0;
                 Console.WriteLine();
             }
         }
@@ -56,29 +57,64 @@ namespace JoKenPoLiSp
 
         private void CalcularNumeroVitorias()
         {
-            for (int i = 0; i < NumeroDeJogadores; i++)
+            for (int i = 0; i < Vitorias.Count; i++)
             {
-                for (int j = 0; j < NumeroDeJogadores; j++)
+                for (int j = 0; j < Vitorias.Count; j++)
                 {
-                    var p1 = Jogadas.ElementAt(i);
-                    var p2 = Jogadas.ElementAt(j);
+                    var p1 = Vitorias.ElementAt(i);
+                    var p2 = Vitorias.ElementAt(j);
 
                     if (p1.Key == p2.Key)
                         continue;
 
+                    if (JaBatalhou(p1.Key,p2.Key))
+                        continue;
+
                     if (p1.Key.GanhaDe(p2.Key) == ResultadoComparacao.Ganha)
-                        Jogadas[p1.Key] += 1;
+                        Vitorias[p1.Key] += 1;
+
+                    Batalhas.Add(new Personagem[] { p1.Key, p2.Key });
                 }
             }
         }
 
+        private bool JaBatalhou(Personagem p1, Personagem p2)
+        {
+            return Batalhas.Where(b => (b[0] == p1 && b[1] == p2) || (b[0] == p2 && b[1] == p1))
+                .Any();
+        }
+
         private void EncontrarMaiorVitorioso()
         {
-            Personagem max = Jogadas.OrderBy(j => j.Value)
+            Personagem max = Vitorias.OrderBy(j => j.Value)
                 .Select(j => j.Key)
                 .First();
 
-            Resultado = $"JOGADOR {Jogadas.Keys.ToList().IndexOf(max)} GANHOU";
+            int empatados = 0;
+            foreach (var jogada in Vitorias)
+                empatados += jogada.Value == Vitorias[max] ? 1 : 0;
+
+            if (empatados > 1)
+            {
+                var newDic = new Dictionary<Personagem, int>();
+                foreach (KeyValuePair<Personagem, int> keyValuePair in Vitorias)
+                    if (keyValuePair.Value == Vitorias[max])
+                        newDic.Add(keyValuePair.Key, keyValuePair.Value);
+
+                if (newDic.Count == Vitorias.Count)
+                {
+                    Resultado = "EMPATE ENTRE MAIS DE UM JOGADOR";
+                    return;
+                }
+                else
+                {
+                    Vitorias = newDic;
+                    CalcularNumeroVitorias();
+                    EncontrarMaiorVitorioso();
+                }
+            }
+
+            Resultado = $"JOGADOR {Vitorias.Keys.ToList().IndexOf(max)} GANHOU";
         }
 
         public override void ExibirVencedor()
